@@ -1,2 +1,2 @@
-# climatechange-ml
-Tackling Climate Change with Machine Learning - a living document
+# Living Litreview
+A living literature review based on the [Tackling Climate Change with Machine Learning](https://www.semanticscholar.org/paper/Tackling-Climate-Change-with-Machine-Learning-Rolnick-Donti/998039a4876edc440e0cabb0bc42239b0eb29644) paper by Rolnick et al. We train a model that learns to represent scientific articles based on language modelling and citation graph edge prediction, allowing new papers to be added to the Living LitReview by extracting latent topics.
