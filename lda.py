@@ -1,9 +1,16 @@
 # adapted from https://radimrehurek.com/gensim/auto_examples/tutorials/run_lda.html#sphx-glr-download-auto-examples-tutorials-run-lda-py
 
 ################################################################ TO CHANGE ################################################################
+# FILE PATHS AND FIELDS
 path_json = "/Users/sneha/Desktop/school/comp 767/sample767.jsonl" # path to json file
 fields = ["title", "abstract", "authors"] # fields to include in training
 path_output = "/Users/sneha/Desktop/school/comp 767" # directory to put graphic output into 
+# TRAINING PARAM
+num_topics = 10
+chunksize = 2000 # how many docs are processed at a time set to 2000 as default
+passes = 20 # how often the model is trained on all the docs set to 20 as default
+iterations = 400 # how often do we iterate over each doc set to 400 as default
+eval_every = None  # Don't evaluate model perplexity, takes too much time.
 ################################################################ TO CHANGE ################################################################
 
 import logging # logs info
@@ -13,7 +20,6 @@ import nltk # for preprocessing
 #nltk.download('wordnet') # for init download if necessary
 from nltk.tokenize import RegexpTokenizer # for tokenization
 from nltk.stem.wordnet import WordNetLemmatizer # for lemmatizing
-from gensim.models import Phrases # to add sets of adjacent words
 from gensim.corpora import Dictionary # to construct dictionary
 from gensim.models import LdaModel # to make LDA model
 from pprint import pprint # print output in a readable way
@@ -54,13 +60,6 @@ docs = [[token for token in doc if len(token) > 1] for doc in docs]
 lemmatizer = WordNetLemmatizer()
 docs = [[lemmatizer.lemmatize(token) for token in doc] for doc in docs]
 
-# Add sets of adjacent words if they appear 20+ times (ie "machine learning")
-bigram = Phrases(docs, min_count=20)
-for idx in range(len(docs)):
-    for token in bigram[docs[idx]]:
-        if '_' in token:
-            docs[idx].append(token)
-
 # constructs word to ID mapping 
 dictionary = Dictionary(docs)
 
@@ -73,13 +72,6 @@ corpus = [dictionary.doc2bow(doc) for doc in docs]
 # Finds how many unique tokens we've found and how many docs we have
 print('Number of unique tokens: %d' % len(dictionary))
 print('Number of documents: %d' % len(corpus))
-
-# Set training parameters.
-num_topics = 10
-chunksize = 2000 # how many docs are processed at a time set to 2000 as default
-passes = 20 # how often the model is trained on all the docs set to 20 as default
-iterations = 400 # how often do we iterate over each doc set to 400 as default
-eval_every = None  # Don't evaluate model perplexity, takes too much time.
 
 # index to word dictionary
 temp = dictionary[0] 
