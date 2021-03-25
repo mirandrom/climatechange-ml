@@ -1,8 +1,9 @@
 # adapted from https://radimrehurek.com/gensim/auto_examples/tutorials/run_lda.html#sphx-glr-download-auto-examples-tutorials-run-lda-py
 
 ################################################################ TO CHANGE ################################################################
-path_output = "/Users/sneha/Desktop/sample767.jsonl" # path to json file
+path_json = "/Users/sneha/Desktop/school/comp 767/sample767.jsonl" # path to json file
 fields = ["title", "abstract", "authors"] # fields to include in training
+path_output = "/Users/sneha/Desktop/school/comp 767" # directory to put graphic output into 
 ################################################################ TO CHANGE ################################################################
 
 import logging # logs info
@@ -16,9 +17,9 @@ from gensim.models import Phrases # to add sets of adjacent words
 from gensim.corpora import Dictionary # to construct dictionary
 from gensim.models import LdaModel # to make LDA model
 from pprint import pprint # print output in a readable way
+import pyLDAvis.gensim
 
-
-with open(path_output) as fp:
+with open(path_json) as fp:
     papers = [json.loads(line) for line in fp.readlines()]
 
 docs = []
@@ -69,17 +70,15 @@ dictionary.filter_extremes(no_below=20, no_above=0.5)
 # transform to vectorized form to put in model
 corpus = [dictionary.doc2bow(doc) for doc in docs]
 
-
-
 # Finds how many unique tokens we've found and how many docs we have
 print('Number of unique tokens: %d' % len(dictionary))
 print('Number of documents: %d' % len(corpus))
 
 # Set training parameters.
 num_topics = 10
-chunksize = 2000 # how many docs are processed at a time 
-passes = 20 # how often the model is trained on all the docs set to 20 b4
-iterations = 400 # how often do we iterate over each doc
+chunksize = 2000 # how many docs are processed at a time set to 2000 as default
+passes = 20 # how often the model is trained on all the docs set to 20 as default
+iterations = 400 # how often do we iterate over each doc set to 400 as default
 eval_every = None  # Don't evaluate model perplexity, takes too much time.
 
 # index to word dictionary
@@ -100,7 +99,8 @@ model = LdaModel(
 
 avg_topic_coherence = sum([t[1] for t in model.top_topics(corpus)]) / num_topics # sum of topic coherences of all topics, divided by the number of topics
 print('Average topic coherence: %.4f.' % avg_topic_coherence)
-
+model.print_topics()
+visualisation = pyLDAvis.gensim.prepare(model, corpus, dictionary)
+full_output_path = path_output + '/LDA_Visualization.html'
 pprint(model.print_topics())
-
-# TODO add graphical component
+pyLDAvis.save_html(visualisation, full_output_path)
