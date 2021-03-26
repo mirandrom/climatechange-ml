@@ -4,9 +4,10 @@
 # FILE PATHS AND FIELDS
 path_json = "/Users/sneha/Desktop/school/comp 767/sample767.jsonl" # path to json file
 fields = ["title", "abstract", "authors"] # fields to include in training
-path_output = "/Users/sneha/Desktop/school/comp 767" # directory to put graphic output into 
+path_output = "/Users/sneha/Desktop/school/comp 767/models-and-visualization" # directory to put graphic output into 
+param_changes = "NO2CHAR" # type of model
 # TRAINING PARAM
-num_topics = 10
+num_topics = 20
 chunksize = 2000 # how many docs are processed at a time set to 2000 as default
 passes = 20 # how often the model is trained on all the docs set to 20 as default
 iterations = 400 # how often do we iterate over each doc set to 400 as default
@@ -54,7 +55,7 @@ for idx in range(len(docs)): # convert to lowercase & split into words
 docs = [[token for token in doc if not token.isnumeric()] for doc in docs]
 
 # take out words that are one character
-docs = [[token for token in doc if len(token) > 1] for doc in docs]
+docs = [[token for token in doc if len(token) > 2] for doc in docs]
 
 # lemmatize
 lemmatizer = WordNetLemmatizer()
@@ -93,6 +94,7 @@ avg_topic_coherence = sum([t[1] for t in model.top_topics(corpus)]) / num_topics
 print('Average topic coherence: %.4f.' % avg_topic_coherence)
 model.print_topics()
 visualisation = pyLDAvis.gensim.prepare(model, corpus, dictionary)
-full_output_path = path_output + '/LDA_Visualization.html'
+full_output_path = path_output + "/visualization/LDA_Visualization_" + param_changes + ".html"
 pprint(model.print_topics())
 pyLDAvis.save_html(visualisation, full_output_path)
+model.save(path_output + "/LDA_" + param_changes + ".model")
